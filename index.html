@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unaadeb Setor 13 - Inscrição</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #111, #333);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .container {
+      background-color: #1f1f1f;
+      padding: 2rem;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .logo img {
+      max-width: 160px;
+      height: auto;
+      border-radius: 12px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #00ffaa;
+      font-size: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 0.4rem;
+      border-radius: 10px;
+      border: none;
+      background-color: #2a2a2a;
+      color: white;
+      font-size: 1rem;
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #00ffaa;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00dd99;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .msg {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .pagamento {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .pagamento img {
+      max-width: 250px;
+      border-radius: 12px;
+      margin: 1rem auto;
+      box-shadow: 0 0 10px rgba(0,255,170,0.3);
+    }
+
+    .pix-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .pix-container strong {
+      color: #0f0;
+      font-size: 1rem;
+    }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #00ffaa;
+    }
+
+    .copy-btn:hover {
+      color: #00dd99;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="logo-evento.png.png" alt="Logo do Evento Unaadeb">
+    </div>
+    <h2>Inscrição - Unaadeb Setor 13</h2>
+    <form id="inscricaoForm">
+      <label for="nome">Nome Completo*</label>
+      <input type="text" id="nome" name="nome" required>
+
+      <label for="nascimento">Data de Nascimento*</label>
+      <input type="date" id="nascimento" name="nascimento" required>
+
+      <label for="telefone">Telefone*</label>
+      <input type="tel" id="telefone" name="telefone" placeholder="Digite seu telefone" required>
+
+      <label for="congregacao">Congregação*</label>
+      <select id="congregacao" name="congregacao" required>
+        <option value="">Selecione...</option>
+        <option value="307">307</option>
+        <option value="302">302</option>
+        <option value="202">202</option>
+        <option value="402">402</option>
+        <option value="100">100</option>
+        <option value="Porto Rico">Porto Rico</option>
+        <option value="Central">Central</option>
+        <option value="120">120</option>
+        <option value="213">213</option>
+        <option value="316">316</option>
+        <option value="318">318</option>
+        <option value="517">517</option>
+      </select>
+
+      <button type="submit">Continuar com Pagamento via Pix</button>
+      <p class="msg hidden" id="mensagem"></p>
+    </form>
+
+    <div class="pagamento hidden" id="secaoPagamento">
+      <h2>Pagamento via Pix</h2>
+      <img src="qr-code-pix.png.png" alt="QR Code Pix" />
+      <div class="pix-container">
+        <strong id="chavePix">patriciaribeirosoares1984@gmail.com</strong>
+        <button class="copy-btn" onclick="copiarChavePix()">🗐</button>
+      </div>
+      <button onclick="confirmarPagamento()">✅ Pagamento realizado</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js';
+
+    const supabase = createClient('https://spqrncljngdhvegzjols.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwcXJuY2xqbmdkaHZlZ3pqb2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjcxNzIsImV4cCI6MjA2OTUwMzE3Mn0.j2LBYFjR387xrhONgc3_z2DsNuGT2_q3PK5rjQLlt0s');
+
+    const form = document.getElementById('inscricaoForm');
+    const mensagem = document.getElementById('mensagem');
+    const secaoPagamento = document.getElementById('secaoPagamento');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const dados = {
+        nome: form.nome.value,
+        nascimento: form.nascimento.value,
+        telefone: form.telefone.value,
+        congregacao: form.congregacao.value
+      };
+
+      const { error } = await supabase.from('inscritos').insert([dados]);
+
+      if (!error) {
+        localStorage.setItem('telefone', form.telefone.value);
+        mensagem.textContent = 'Inscrição registrada! Agora realize o pagamento via Pix.';
+        mensagem.style.color = '#0f0';
+        mensagem.classList.remove('hidden');
+        secaoPagamento.classList.remove('hidden');
+        form.classList.add('hidden');
+      } else {
+        mensagem.textContent = 'Erro ao registrar inscrição. Tente novamente.';
+        mensagem.style.color = 'red';
+        mensagem.classList.remove('hidden');
+      }
+    });
+  </script>
+
+  <script>
+    function confirmarPagamento() {
+      alert('✅ Obrigado! Seu pagamento foi registrado com sucesso. Aguarde a confirmação do responsável pelo evento.');
+      location.reload();
+    }
+
+    function copiarChavePix() {
+      const chave = document.getElementById('chavePix').textContent;
+      navigator.clipboard.writeText(chave)
+        .then(() => alert('🗐 Chave Pix copiada com sucesso!'))
+        .catch(err => alert('❌ Erro ao copiar a chave Pix.'));
+    }
+  </script>
+</body>
+</html>
